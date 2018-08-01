@@ -1,0 +1,71 @@
+% function Zclean = HBAR_removeparasitics(f, Z)
+function [Zclean, fit] = HBAR_removeparasitics_v3(f, Z)
+    
+    zr = deripple(f, real(Z));
+    zi = deripple(f, imag(Z));
+    Zc = complex(zr, zi);
+    fit = bvdextfit(f, Zc);
+    Zf = fit.Zfit;    
+    
+    
+    ZC0 = 1./(2i*pi*f*fit.C0);
+    ZCm = 1./(2i*pi*f*fit.Cm);
+    ZLm =     2i*pi*f*fit.Lm;
+    ZLc =     2i*pi*f*fit.Lc;
+    Zu  = 1./(fit.U*2*pi*f);
+    Zm  = ZCm + ZLm + fit.Rm;
+    
+    function [z1, z2, z3, z4] = deembed(Z)
+        z1 = Z - Rc;
+        z2 = Z - ZLc;
+        z3 = Z - Zu;
+        z4 = Z - 
+        
+        z1 = Z - ZLc; %- Zu; 
+        z2 = z1; %- fit.Rc; 
+        
+        %z3 = fit.Rp*z2./(fit.Rp - z2);
+        z3 = z2;
+        
+        %z4 = 1./(1./z3 - 1./Zm) - ZC0 - fit.R0;
+        %z4 = 1./(1./(z4 + ZC0) + 1./Zm);
+        z4 = z3;
+    end
+    
+    [Z1, Z2, Z3, Z4] = deembed(Z);
+    [Zf1, Zf2, Zf3, Zf4] = deembed(Zf);
+    [Zc1, Zc2, Zc3, Zc4] = deembed(Zc);
+    
+    Zclean = Z4;
+    
+    h = gcf;
+        fig parasitics:null; clf;
+        rawdataplot(f, Z);
+        rawdataplot(f, Zc);
+        rawdataplot(f, Zf);
+        subplot(2,2,1);
+        label([0.6 0.7], sprintf('$C_0 = %.2f$\\,pF', fit.C0*1e12));
+        label([0.6 0.6], sprintf('$\\tan(\\delta) = %.2f\\%%$', fit.td*100));
+
+        fig parasitics:eins; clf;
+        rawdataplot(f, Z1);
+        rawdataplot(f, Zc1);
+        rawdataplot(f, Zf1);
+        subplot(2,2,1);
+        label([0.6 0.7], sprintf('$R_c = %.2f\\,\\Omega$', fit.Rc));
+
+%         fig parasitics:zwei; clf;
+%         rawdataplot(f, Z2);
+%         rawdataplot(f, Zc2);
+%         rawdataplot(f, Zf2);
+%         subplot(2,2,1);
+%         label([0.5 0.8], sprintf('$R_p = %.0f\\,\\rm M\\Omega$', fit.Rp/1e6));
+%         
+%         fig parasitics:R0; clf;
+%         rawdataplot(f, Z4);
+%         rawdataplot(f, Zc4);
+%         rawdataplot(f, Zf4);
+%         subplot(2,2,1); label([0.5 0.8], sprintf('$R_0 = %.2f\\,\\Omega$', fit.R0));
+        
+    figure(h);
+end

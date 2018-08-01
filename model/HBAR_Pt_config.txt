@@ -1,0 +1,14 @@
+
+HBARconfig
+
+# geometry
+radii 96um 210um 300um;
+
+# layers top to bottom
+layer TE TopEl Pt    200nm "Top Electrode"
+layer PL Piezo ASN15 880nm "Piezo Layer"
+layer BE BotEl Pt    300nm "Bottom Electrode"
+layer BS Oxide SiO2  200nm "Oxide Layer"
+layer BS Subst Si    725um "Substrate"
+
+# codes: TE top electrode, BE bottom electrode, BA bottom adhesion layer, PL piezo layer, PS piezo seed layer, BS bottom substrate, 
